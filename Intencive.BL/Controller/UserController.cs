@@ -76,6 +76,9 @@ namespace Intencive.BL.Controller
         {
             var sex = new Gender(gender);
             CurentUser = new User(userName, sex, birth, weight, height);
+            isNewUser = true;
+            Users = GetUsersList();
+            Save();
         }
         /// <summary>
         /// Сохранить данные пользователя.
@@ -106,6 +109,16 @@ namespace Intencive.BL.Controller
                     return new List<User>();
                 }
             }
+        }
+        public override bool Equals(object obj)
+        {
+            var temp = obj as UserController;
+            if(this.CurentUser.Age==temp.CurentUser.Age && this.CurentUser.Birth == temp.CurentUser.Birth && this.CurentUser.Gender == temp.CurentUser.Gender
+                && this.CurentUser.Height == temp.CurentUser.Height && this.CurentUser.Weight == temp.CurentUser.Weight)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }
