@@ -7,7 +7,7 @@ namespace Intencive.BL.Model
     /// <summary>
     /// Пользователь
     /// </summary>
-    ///     [Serializable]
+     [Serializable]
     public class User
     {
         #region Properties
@@ -73,7 +73,7 @@ namespace Intencive.BL.Model
             }
             if (height<0 || height>400)
             {
-                throw new ArgumentException("Your Height is wrong or anomaly",nameof(height);
+                throw new ArgumentException("Your Height is wrong or anomaly",nameof(height));
             }
             #endregion
             Name = name;
