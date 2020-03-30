@@ -2,12 +2,15 @@
 
 namespace Intencive.BL.Model
 {
-    #region Properties
+
+
     /// <summary>
     /// Пользователь
     /// </summary>
+    ///     [Serializable]
     public class User
     {
+        #region Properties
         /// <summary>
         /// Имя.
         /// </summary>
@@ -78,7 +81,6 @@ namespace Intencive.BL.Model
             Birth = birth;
             Weight = weight;
             Height = height;
-
         }
         public override string ToString()
         {
