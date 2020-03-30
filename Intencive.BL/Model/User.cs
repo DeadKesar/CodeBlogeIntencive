@@ -7,7 +7,7 @@ namespace Intencive.BL.Model
     /// <summary>
     /// Пользователь
     /// </summary>
-    ///     [Serializable]
+     [Serializable]
     public class User
     {
         #region Properties
@@ -18,11 +18,11 @@ namespace Intencive.BL.Model
         /// <summary>
         /// пол.
         /// </summary>
-        public Gender Gender { get; }
+        public Gender Gender { get; set; }
         /// <summary>
         /// Дата рождения.
         /// </summary>
-        public DateTime Birth { get; }
+        public DateTime Birth { get; set; }
 /// <summary>
 /// Вес.
 /// </summary>
@@ -31,6 +31,8 @@ namespace Intencive.BL.Model
         /// Рост
         /// </summary>
         public double Height { get; set; }
+
+        public int Age { get { return (DateTime.Now.Year - Birth.Year- (DateTime.Now.DayOfYear-Birth.DayOfYear)<=0?0:1); } }
         #endregion
         /// <summary>
         /// Создать нового пользователя.
@@ -67,13 +69,13 @@ namespace Intencive.BL.Model
             {
                 throw new ArgumentException("Hey, how future look?", nameof(birth));
             }
-            if (Weight<0.0 || weight > 700)
+            if (weight<0.0 || weight > 700)
             {
                 throw new ArgumentException("your Weigh is wrong or too Anomaly",nameof(weight));
             }
             if (height<0 || height>400)
             {
-                throw new ArgumentException("Your Height is wrong or anomaly",nameof(height);
+                throw new ArgumentException("Your Height is wrong or anomaly",nameof(height));
             }
             #endregion
             Name = name;
@@ -82,9 +84,17 @@ namespace Intencive.BL.Model
             Weight = weight;
             Height = height;
         }
+        public User(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentNullException("Name can't be NULL", nameof(name));
+            }
+            Name = name;
+        }
         public override string ToString()
         {
-            return $"Name: {Name}; Gender: {Gender}; Birth: {Birth}; Weight: {Weight}; Height: {Height}.  ";
+            return $"Name: {Name}; Gender: {Gender}; Birth: {Birth}, Age: {Age}; Weight: {Weight}; Height: {Height}.  ";
         }
 
     }

@@ -1,13 +1,68 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using Intencive.BL.Model;
+using System.Linq;
 
 namespace Intencive.BL.Controller
 {
     public class UserController
     {
-        public User User { get; }
+        public List<User> Users { get; }
+        public User CurentUser { get; }
+        public bool isNewUser { get; } = false;
+        public UserController( string userName)
+        {
+            if(string.IsNullOrEmpty(userName))
+            {
+                throw new ArgumentNullException("Name is not exist.", nameof(userName));
+            }
+            Users = GetUsersList();
+            CurentUser = Users.SingleOrDefault<User>(x => x.Name == userName);
+            if(CurentUser == null)
+            {
+                CurentUser = new User(userName);
+                Users.Add(CurentUser);
+                isNewUser = true;
+                Save();
+            }
+        }
+        public void SetNewUserData(string genderName, DateTime birth, double weight =1, double height = 1)
+        {
+            #region tryCode
+            if (genderName == null)
+            {
+                throw new ArgumentNullException("Gender must be setting", nameof(genderName));
+            }
+            if (birth == null)
+            {
+                throw new ArgumentNullException("Need date of birth", nameof(birth));
+            }
+            if (birth < new DateTime(1900, 01, 01))
+            {
+                new ArgumentException("You are too old for this app", nameof(birth));
+            }
+            if (birth > DateTime.Now)
+            {
+                throw new ArgumentException("Hey, how future look?", nameof(birth));
+            }
+            if (weight < 0.0 || weight > 700)
+            {
+                throw new ArgumentException("your Weigh is wrong or too Anomaly", nameof(weight));
+            }
+            if (height < 0 || height > 400)
+            {
+                throw new ArgumentException("Your Height is wrong or anomaly", nameof(height));
+            }
+            #endregion
+            CurentUser.Gender = new Gender(genderName);
+            CurentUser.Birth = birth;
+            CurentUser.Weight = weight;
+            CurentUser.Height = height;
+            Save();
+        }
+
 
         /// <summary>
         /// Создать юзера для сериализации.
@@ -20,7 +75,7 @@ namespace Intencive.BL.Controller
         public UserController(string userName, string gender, DateTime birth, double weight, double height)
         {
             var sex = new Gender(gender);
-            User = new User(userName, sex, birth, weight, height);
+            CurentUser = new User(userName, sex, birth, weight, height);
         }
         /// <summary>
         /// Сохранить данные пользователя.
@@ -30,21 +85,27 @@ namespace Intencive.BL.Controller
             var bin = new BinaryFormatter();
             using (var file = new FileStream ("user.dat",FileMode.OpenOrCreate))
             {
-                bin.Serialize(file, User);
+                bin.Serialize(file, Users);
             }
         }
         /// <summary>
-        /// Загрузить данные пользователя.
+        /// Получить список данных пользователей.
         /// </summary>
-        /// <returns>Пользователя из файла user.dat.</returns>
-        public UserController()
+        /// <returns>Список из файла user.dat.</returns>
+        private List<User> GetUsersList()
         {
             var bin = new BinaryFormatter();
             using (var file = new FileStream("user.dat", FileMode.OpenOrCreate))
             {
-                User = bin.Deserialize(file) as User;
+                if (file.Length > 1 && bin.Deserialize(file) is List<User> users)
+                {
+                    return users;
+                }
+                else
+                {
+                    return new List<User>();
+                }
             }
-            //TODO: Что делать если ползователя ещё нету.
         }
     }
 }
