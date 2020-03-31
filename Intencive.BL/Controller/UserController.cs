@@ -7,8 +7,9 @@ using System.Linq;
 
 namespace Intencive.BL.Controller
 {
-    public class UserController
+    public class UserController : BaseController
     {
+        private const string USER_FILE_NAME = "user.dat";
         public List<User> Users { get; }
         public User CurentUser { get; }
         public bool isNewUser { get; } = false;
@@ -85,11 +86,7 @@ namespace Intencive.BL.Controller
         /// </summary>
         public void Save ()
         {
-            var bin = new BinaryFormatter();
-            using (var file = new FileStream ("user.dat",FileMode.OpenOrCreate))
-            {
-                bin.Serialize(file, Users);
-            }
+            Save(USER_FILE_NAME, (object)Users);
         }
         /// <summary>
         /// Получить список данных пользователей.
@@ -97,18 +94,7 @@ namespace Intencive.BL.Controller
         /// <returns>Список из файла user.dat.</returns>
         private List<User> GetUsersList()
         {
-            var bin = new BinaryFormatter();
-            using (var file = new FileStream("user.dat", FileMode.OpenOrCreate))
-            {
-                if (file.Length > 1 && bin.Deserialize(file) is List<User> users)
-                {
-                    return users;
-                }
-                else
-                {
-                    return new List<User>();
-                }
-            }
+            return Load<List<User>>(USER_FILE_NAME) ?? new List<User>();
         }
         public override bool Equals(object obj)
         {

@@ -1,5 +1,5 @@
 ﻿using Intencive.BL.Controller;
-
+using Intencive.BL.Model;
 using System;
 
 namespace Intevsiv.CMD
@@ -20,10 +20,36 @@ namespace Intevsiv.CMD
                 var weight = ParseDouble("weight");
                 var height = ParseDouble("height");
                 userController.SetNewUserData(genderName, birthDate, weight, height);
-
             }
             Console.WriteLine(userController.CurentUser);
+            var eatingController = new EatingController(userController.CurentUser);
+            Console.WriteLine("what you want to do\n" +
+                              "E - enter eating(Ввести прием пищи)\n");
+            var key = Console.ReadKey();
+            if (key.Key == ConsoleKey.E)
+            {
+               var value =  EnterEating();
+                eatingController.Add(value.Food,value.weight);
+                foreach (var item in eatingController.Eating.Foods)
+                {
+                    Console.WriteLine(item);
+                }
+            }
+
+
             Console.ReadLine();
+        }
+ 
+        private static (Food Food,double weight) EnterEating()
+        {
+            Console.Write("Enter product name");
+            var name = Console.ReadLine();
+            var weight = ParseDouble("weight");
+            var callories = ParseDouble("Callories");
+            var proteins = ParseDouble("proteins");
+            var fats = ParseDouble("fats");
+            var carbohydrates = ParseDouble("carbohydrates");
+            return (new Food(name, callories, proteins, fats, carbohydrates), weight);
         }
 
         private static DateTime PArseDateTime()
