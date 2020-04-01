@@ -1,6 +1,8 @@
 ﻿using Intencive.BL.Controller;
 using Intencive.BL.Model;
 using System;
+using System.Globalization;
+using System.Resources;
 
 namespace Intevsiv.CMD
 {
@@ -8,13 +10,15 @@ namespace Intevsiv.CMD
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hellow people. You in test intensive APP");
-            Console.WriteLine("Enter user name");
+            var culture = CultureInfo.CreateSpecificCulture("en-us");
+            var resoursesManeger = new ResourceManager("Intevsiv.CMD.Lang.Messages", typeof(Program).Assembly);
+            Console.WriteLine(resoursesManeger.GetString("Hellow",culture));
+            Console.WriteLine(resoursesManeger.GetString("EnterName",culture));
             var name = Console.ReadLine();
             var userController = new UserController(name);
             if (userController.isNewUser == true)
             {
-                Console.WriteLine("Chose your gender");
+                Console.WriteLine(resoursesManeger.GetString("EnterGender", culture));
                 string genderName = Console.ReadLine();
                 DateTime birthDate = PArseDateTime();
                 var weight = ParseDouble("weight");
