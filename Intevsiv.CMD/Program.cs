@@ -20,30 +20,76 @@ namespace Intevsiv.CMD
             {
                 Console.WriteLine(resoursesManeger.GetString("EnterGender", culture));
                 string genderName = Console.ReadLine();
-                DateTime birthDate = PArseDateTime();
+                DateTime birthDate = PArseDateTime("date of birth");
                 var weight = ParseDouble("weight");
                 var height = ParseDouble("height");
                 userController.SetNewUserData(genderName, birthDate, weight, height);
             }
             Console.WriteLine(userController.CurentUser);
             var eatingController = new EatingController(userController.CurentUser);
-            Console.WriteLine("what you want to do\n" +
-                              "E - enter eating(Ввести прием пищи)\n");
-            var key = Console.ReadKey();
-            if (key.Key == ConsoleKey.E)
+
+            var exerciseController = new ExerciseController(userController.CurentUser);
+
+
+            while (true)
             {
-               var value =  EnterEating();
-                eatingController.Add(value.Food,value.weight);
-                foreach (var item in eatingController.Eating.Foods)
+                Console.WriteLine("what you want to do\n" +
+                                  "E - enter eating(Ввести прием пищи)\n" +
+                                  "A - Enter the exrcise \n" +
+                                  "Q - exit \n");
+                var key = Console.ReadKey();
+                Console.WriteLine();
+                switch (key.Key)
                 {
-                    Console.WriteLine(item);
+                    case ConsoleKey.E:
+                        {
+
+                            var value = EnterEating();
+                            eatingController.Add(value.Food, value.weight);
+                            foreach (var item in eatingController.Eating.Foods)
+                            {
+                                Console.WriteLine(item);
+                            }
+                            break;
+                        }
+                    case ConsoleKey.A:
+                        {
+                            var cart = EnterExercise();
+                            exerciseController.Add(cart.activity, cart.start, cart.stop);
+                            foreach (var item in exerciseController.Exercises)
+                            {
+                                Console.WriteLine(item.User.Name + " " + item.start+" " + item.Activity+"\n"+item.Finish);
+                            }
+                            break;
+
+
+                        }
+                    case ConsoleKey.Q:
+                        {
+                            Environment.Exit(0);
+                            break;
+                        }
                 }
+
+
+                Console.ReadLine();
             }
-
-
-            Console.ReadLine();
         }
- 
+
+        private static (DateTime start,DateTime stop, Activity activity) EnterExercise()
+        {
+            Console.WriteLine("Enter exercise name:");
+            var name = Console.ReadLine();
+            var cal = ParseDouble("CAlories");
+            var activity = new Activity(name, cal);
+            var begin = PArseDateTime("exercise start");
+            var end = PArseDateTime("exercise stop");
+            return (begin, end, activity);
+
+
+            throw new NotImplementedException();
+        }
+
         private static (Food Food,double weight) EnterEating()
         {
             Console.Write("Enter product name");
@@ -56,19 +102,19 @@ namespace Intevsiv.CMD
             return (new Food(name, callories, proteins, fats, carbohydrates), weight);
         }
 
-        private static DateTime PArseDateTime()
+        private static DateTime PArseDateTime(string value)
         {
  
             while (true)
             {
-                Console.WriteLine("Ener your Birth date:");
-                if (DateTime.TryParse(Console.ReadLine(), out var birthDate))
+                Console.WriteLine($"Ener your {value}:");
+                if (DateTime.TryParse(Console.ReadLine(), out var Date))
                 {
-                    return birthDate;
+                    return Date;
                 }
                 else
                 {
-                    Console.WriteLine("Incorrect date formate");
+                    Console.WriteLine($"Incorrect date formate of {value}");
                 }
             }
         }
